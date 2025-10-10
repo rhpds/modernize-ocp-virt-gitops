@@ -1,16 +1,15 @@
-# Script to  podman pull quay.io/kiali/demo_travels_flights:v1
+# Script to  podman pull quay.io/kiali/demo_travels_travels:v1
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: flights-vm
-  namespace: travel-agency
+  name: travels-vm
+  namespace: {{ .Values.username }}-travel-agency
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
       kind: DataVolume
       metadata:
-        creationTimestamp: null
-        name: fedora-flights
+        name: fedora-travels
       spec:
         sourceRef:
           kind: DataSource
@@ -27,14 +26,14 @@ spec:
         vm.kubevirt.io/flavor: small
         vm.kubevirt.io/os: fedora
         vm.kubevirt.io/workload: server
-#        sidecar.istio.io/inject: 'true'
+        # sidecar.istio.io/inject: 'true'
         istio.io/reroute-virtual-interfaces: "k6t-eth0"
-      creationTimestamp: null
       labels:
-        kubevirt.io/domain: flights-vm
+        kubevirt.io/domain: travels-vm
         kubevirt.io/size: small
-        app: flights-vm
+        app: travels-vm
         version: v1
+        # sidecar.istio.io/inject: 'true'
     spec:
       architecture: amd64
       domain:
@@ -72,44 +71,40 @@ spec:
       terminationGracePeriodSeconds: 180
       volumes:
         - dataVolume:
-            name: fedora-flights
+            name: fedora-travels
           name: rootdisk
         - cloudInitNoCloud:
             userData: |-
               #cloud-config
               user: fedora
-              password: ukqo-2vq4-xdjf
+              password: redhat
               chpasswd: { expire: False }
               ssh_pwauth: true
               runcmd:
                 - loginctl enable-linger fedora
                 - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user daemon-reload'
-                - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start flights.service'
+                - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start travels.service'
               write_files:
               - content: |
                   [Unit]
-                  Description=Fedora Flights Container
-
+                  Description=Fedora Travels Container
                   [Container]
-                  Label=app=flights-container
-                  ContainerName=flights-container
-                  Image=quay.io/kiali/demo_travels_flights:v1
-                  Environment=CURRENT_SERVICE='flights'
-                  Environment=CURRENT_VERSION='v1
+                  Label=app=travel-container
+                  ContainerName=travel-container
+                  Image=quay.io/kiali/demo_travels_travels:v1
+                  Environment=CURRENT_SERVICE='travels'
+                  Environment=CURRENT_VERSION='v1'
                   Environment=LISTEN_ADDRESS=':8000'
-                  Environment=MYSQL_SERVICE='mysqldb-vm.travel-agency.svc.cluster.local:3306'
-                  Environment=MYSQL_USER='root'
-                  Environment=MYSQL_PASSWORD='mysqldbpass'
-                  Environment=DISCOUNTS_SERVICE='http://discounts-vm.travel-agency.svc.cluster.local:8000'
-                  Environment=MYSQL_DATABASE='test'
+                  Environment=FLIGHTS_SERVICE='http://flights-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:8000'
+                  Environment=HOTELS_SERVICE='http://hotels-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:8000'
+                  Environment=CARS_SERVICE='http://cars-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:8000'
+                  Environment=INSURANCES_SERVICE='http://insurances-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:8000'
                   PodmanArgs=-p 8000:8000
-
                   [Install]
                   WantedBy=multi-user.target default.target
-
                   [Service]
                   Restart=always
-                path: /etc/containers/systemd/users/flights.container
+                path: /etc/containers/systemd/users/travels.container
                 permissions: '0777'
                 owner: root:root
           name: cloudinitdisk

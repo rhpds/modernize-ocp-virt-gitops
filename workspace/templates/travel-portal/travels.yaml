@@ -2,12 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: voyages
-  namespace: travel-portal
+  name: travels
+  namespace: {{ .Values.username }}-travel-portal
 spec:
   selector:
     matchLabels:
-      app: voyages
+      app: travels
       version: v1
   replicas: 1
   template:
@@ -15,11 +15,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: voyages
+        app: travels
         version: v1
     spec:
       containers:
-        - name: voyages
+        - name: control
           image: quay.io/kiali/demo_travels_portal:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -30,24 +30,24 @@ spec:
             - name: LISTEN_ADDRESS
               value: ':8000'
             - name: PORTAL_COORDINATES
-              value: '48.861310,2.337418'
+              value: '55.956245,-3.187915'
             - name: PORTAL_COUNTRY
-              value: 'France'
+              value: 'United Kingdom'
             - name: PORTAL_NAME
-              value: 'voyages.fr'
+              value: 'travels.uk'
             - name: TRAVELS_AGENCY_SERVICE
-              value: 'http://travels-vm.travel-agency:8000'
+              value: 'http://travels-vm.{{ .Values.username }}-travel-agency:8000'
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: voyages
-  namespace: travel-portal
+  name: travels
+  namespace: {{ .Values.username }}-travel-portal
   labels:
-    app: voyages
+    app: travels
 spec:
   ports:
     - name: http
       port: 8000
   selector:
-    app: voyages
+    app: travels

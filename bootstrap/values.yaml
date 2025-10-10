@@ -2,29 +2,19 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-user: user1
-
-infoNamespace: openshift-gitops
+user:
+  count: 2
+  prefix: user
 
 deployer:
   domain: apps.cluster-guid.sandbox.opentlc.com
   apiUrl: https://api.cluster-guid.sandbox.opentlc.com:6443
 
-git:
-  url: https://github.com/rhpds/virt-ossm-gitops
-  revision: main
-
-ossm:
-  path: ossm
-  values:
-    myKey: myValue
-
-agency:
-  path: travel-agency
-  values:
-    myKey: myValue
-
-portal:
-  path: travel-portal
-  values:
-    myKey: myValue
+# This is the user-scoped git repo, where per seat user resources are stored.
+# Set to empty to NOT create workspaces.
+# workspace: ""
+workspace:
+  git:
+    url: https://github.com/rhpds/modernize-ocp-virt-gitops.git
+    revision: main
+    path: workspace

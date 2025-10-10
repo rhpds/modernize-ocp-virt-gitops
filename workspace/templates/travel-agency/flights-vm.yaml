@@ -1,16 +1,15 @@
-# Script to  podman pull quay.io/kiali/demo_travels_insurances:v1
+# Script to  podman pull quay.io/kiali/demo_travels_flights:v1
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: insurances-vm
-  namespace: travel-agency
+  name: flights-vm
+  namespace: {{ .Values.username }}-travel-agency
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
       kind: DataVolume
       metadata:
-        creationTimestamp: null
-        name: fedora-insurances
+        name: fedora-flights
       spec:
         sourceRef:
           kind: DataSource
@@ -27,14 +26,14 @@ spec:
         vm.kubevirt.io/flavor: small
         vm.kubevirt.io/os: fedora
         vm.kubevirt.io/workload: server
-#        sidecar.istio.io/inject: 'true'
+        # sidecar.istio.io/inject: 'true'
         istio.io/reroute-virtual-interfaces: "k6t-eth0"
-      creationTimestamp: null
       labels:
-        kubevirt.io/domain: insurances-vm
+        kubevirt.io/domain: flights-vm
         kubevirt.io/size: small
-        app: insurances-vm
+        app: flights-vm
         version: v1
+        # sidecar.istio.io/inject: 'true'
     spec:
       architecture: amd64
       domain:
@@ -72,44 +71,41 @@ spec:
       terminationGracePeriodSeconds: 180
       volumes:
         - dataVolume:
-            name: fedora-insurances
+            name: fedora-flights
           name: rootdisk
         - cloudInitNoCloud:
             userData: |-
               #cloud-config
               user: fedora
-              password: ukqo-2vq4-xdjf
+              password: redhat
               chpasswd: { expire: False }
               ssh_pwauth: true
               runcmd:
                 - loginctl enable-linger fedora
                 - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user daemon-reload'
-                - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start insurances.service'
+                - su - fedora -c 'XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus" systemctl --user start flights.service'
               write_files:
               - content: |
                   [Unit]
-                  Description=Fedora Insurances Container
-
+                  Description=Fedora Flights Container
                   [Container]
-                  Label=app=insurances-container
-                  ContainerName=insurances-container
-                  Image=quay.io/kiali/demo_travels_insurances:v1
-                  Environment=CURRENT_SERVICE='insurances'
+                  Label=app=flights-container
+                  ContainerName=flights-container
+                  Image=quay.io/kiali/demo_travels_flights:v1
+                  Environment=CURRENT_SERVICE='flights'
                   Environment=CURRENT_VERSION='v1
                   Environment=LISTEN_ADDRESS=':8000'
-                  Environment=MYSQL_SERVICE='mysqldb-vm.travel-agency.svc.cluster.local:3306'
+                  Environment=MYSQL_SERVICE='mysqldb-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:3306'
                   Environment=MYSQL_USER='root'
                   Environment=MYSQL_PASSWORD='mysqldbpass'
-                  Environment=DISCOUNTS_SERVICE='http://discounts-vm.travel-agency.svc.cluster.local:8000'
+                  Environment=DISCOUNTS_SERVICE='http://discounts-vm.{{ .Values.username }}-travel-agency.svc.cluster.local:8000'
                   Environment=MYSQL_DATABASE='test'
                   PodmanArgs=-p 8000:8000
-
                   [Install]
                   WantedBy=multi-user.target default.target
-
                   [Service]
                   Restart=always
-                path: /etc/containers/systemd/users/insurances.container
+                path: /etc/containers/systemd/users/flights.container
                 permissions: '0777'
                 owner: root:root
           name: cloudinitdisk
