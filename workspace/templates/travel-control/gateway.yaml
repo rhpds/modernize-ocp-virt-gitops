@@ -1,0 +1,19 @@
+---
+# apiVersion: networking.istio.io/v1
+# kind: Gateway
+# metadata:
+#   name: {{ .Values.username }}-control-gateway
+#   namespace: istio-system
+# spec:
+#   servers:
+#     - hosts:
+#         - "{{ .Values.username }}-istio-ingressgateway-istio-system.{{ .Values.domain }}"
+#       port:
+#         name: http
+#         number: 80
+#         protocol: HTTP
+#   selector:
+#     istio: ingressgateway
+
+
+# https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/service_mesh/service-mesh-2-x#ossm-gateway-migration
