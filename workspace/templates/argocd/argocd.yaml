@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   name: argocd
-  namespace: {{ .Values.username }}-travel-control
+  namespace: {{ .Values.username }}-travel-control-new
 spec:
   sso:
     dex:
