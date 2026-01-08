@@ -12,3 +12,17 @@ spec:
     targetPort: http
   tls:
     termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.username }}-ingress
+  namespace: istio-gateway
+spec:
+  to:
+    kind: Service
+    name: gateway-shared-istio
+  port:
+    targetPort: http
+  tls:
+    termination: edge
