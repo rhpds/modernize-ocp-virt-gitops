@@ -12,6 +12,8 @@ kind: Gateway
 metadata:
   name: gateway-shared
   namespace: istio-gateway
+annotations:
+  networking.istio.io/service-type: ClusterIP
 spec:
   gatewayClassName: istio
   listeners:
