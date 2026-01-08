@@ -3,7 +3,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ .Values.username }}
-  namespace: istio-gatewway
+  namespace: istio-gateway
 spec:
   to:
     kind: Service
