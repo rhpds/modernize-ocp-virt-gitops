@@ -4,8 +4,8 @@ kind: Namespace
 metadata:
   name: {{ .Values.username }}-travel-control-new
   annotations:
-    openshift.io/description: "Travel Control NEW Namespace"
-    openshift.io/display-name: "Travel Control NEW Namespace"
+    openshift.io/description: "Travel Control NEW Namespace for {{ .Values.username }}"
+    openshift.io/display-name: "Travel Control NEW Namespace for {{ .Values.username }}"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

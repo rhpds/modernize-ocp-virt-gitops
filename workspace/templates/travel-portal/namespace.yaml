@@ -4,8 +4,8 @@ kind: Namespace
 metadata:
   name: {{ .Values.username }}-travel-portal
   annotations:
-    openshift.io/description: "Travel Portal Namespace"
-    openshift.io/display-name: "Travel Portal Namespace"
+    openshift.io/description: "Travel Portal Namespace for {{ .Values.username }}"
+    openshift.io/display-name: "Travel Portal Namespace for {{ .Values.username }}"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
