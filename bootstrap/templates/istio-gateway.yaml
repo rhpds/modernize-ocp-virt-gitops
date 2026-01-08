@@ -21,3 +21,11 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-shared-istio
+  namespace: istio-gateway
+spec:
+  type: ClusterIP
