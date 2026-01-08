@@ -11,7 +11,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: gateway-shared
-  namespace: istio-gatewway
+  namespace: istio-gateway
 spec:
   gatewayClassName: istio
   listeners:
